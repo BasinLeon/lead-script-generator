@@ -41,9 +41,9 @@ COMPANY_DNA_PROFILES = {
 }
 
 PRIORITY_CRITERIA = {
-    "P1 - Hot": "Decision maker at target company with active buying signals",
-    "P2 - Warm": "Right persona, good company fit, no immediate signals",
-    "P3 - Nurture": "Good fit but needs education or timing alignment"
+    "P1 - Hot": "Title contains a C-level, VP, or head-of keyword; intent is not verified",
+    "P2 - Warm": "Title contains director, senior, manager, or lead; fit is not verified",
+    "P3 - Nurture": "Other title keywords; this does not establish fit or readiness"
 }
 
 # ============================================================================
@@ -281,7 +281,7 @@ def main():
     
     # Header
     st.markdown('<p class="main-header">✍️ Lead Script Generator</p>', unsafe_allow_html=True)
-    st.markdown('<p class="sub-header">Transform raw leads into personalized, high-converting outreach scripts</p>', unsafe_allow_html=True)
+    st.markdown('<p class="sub-header">Turn CSV rows into editable, template-based outreach drafts</p>', unsafe_allow_html=True)
     
     # Sidebar Configuration
     with st.sidebar:

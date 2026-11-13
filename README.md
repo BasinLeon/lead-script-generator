@@ -1,128 +1,64 @@
-# ✍️ Lead Script Generator
+# Lead Script Generator
 
-> **Basin OS Component: Narrative Engine (Hunter)**  
-> Transform raw leads into personalized, high-converting outreach scripts.
+A Python/Streamlit app that turns a CSV lead list into editable email subjects, email bodies, and LinkedIn drafts using rules and templates.
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/)
+[Quick start](#quick-start) · [Synthetic input](examples/synthetic-leads.csv) · [Example output](examples/synthetic-results.csv) · [Operating context](https://basinleon.github.io/gtm-systems/)
 
----
+![Draft generator running with fictional companies and contacts](docs/synthetic-demo.png)
 
-## 🎯 What It Does
+## What it does
 
-The Lead Script Generator takes your raw lead data and automatically generates:
+Upload a CSV, set the sender name and value proposition, and generate drafts. The app normalizes common column names, assigns a title-based priority, selects a size/category bucket, and applies a matching text template. Results can be reviewed in the preview tab and downloaded as CSV.
 
-- **Personalized Email Subjects** — Attention-grabbing, tailored to company type
-- **Custom Email Bodies** — Written to match company DNA and pain points  
-- **LinkedIn Messages** — Under 300 characters, ready to send
+The current implementation does not call Gemini, Claude, or another LLM. No API key is required. It does not send emails, post LinkedIn messages, enrich contacts, or verify account signals.
 
-## 🧬 Intelligent Classification
+## Quick start
 
-### Priority Levels
+Requires Python 3.10 or newer:
 
-| Priority | Criteria |
-|----------|----------|
-| **P1 - Hot** | C-level, VP, Director with decision authority |
-| **P2 - Warm** | Senior managers, leads with influence |
-| **P3 - Nurture** | Good fit, needs education or timing |
-
-### Company DNA Profiles
-
-| Profile | Size | Tone |
-|---------|------|------|
-| **High-Growth Startup** | <50 employees | Energetic, bold |
-| **Mid-Market** | 50-500 employees | Balanced, consultative |
-| **Enterprise** | 500+ employees | Professional, strategic |
-| **Agency/Consultancy** | Service-based | Collaborative, expert |
-
----
-
-## 🚀 Quick Start
-
-### Local Development
-
-```bash
-# Clone the repository
+```sh
 git clone https://github.com/BasinLeon/lead-script-generator.git
 cd lead-script-generator
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run the app
-streamlit run app.py
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python -m streamlit run app.py
 ```
 
-### Deploy to Streamlit Cloud
+On Windows, activate with `.venv\Scripts\activate` instead. Open the local address printed by Streamlit, usually `http://localhost:8501`.
 
-1. Fork this repository
-2. Go to [share.streamlit.io](https://share.streamlit.io)
-3. Connect your GitHub account
-4. Deploy `app.py`
+For the documented example:
 
----
+1. Set **Your Name** to `Example Operator`.
+2. Set **Your Value Proposition** to `reviewing account signals before drafting outreach`.
+3. Leave **Auto-detect Company DNA** checked.
+4. Upload `examples/synthetic-leads.csv` and choose **Generate Scripts**.
+5. Inspect **Preview Scripts** or download the CSV.
 
-## 📊 CSV Format
+The screenshot and example output use only fictional contacts and reserved example domains. Checked with Python 3.13, Streamlit 1.67, and pandas 3.1 on November 13, 2026. No hosted app is advertised here; the local instructions are the runnable demo.
 
-Your lead CSV should include these columns (flexible naming supported):
+## Inspect the rules
 
-| Column | Aliases | Required |
-|--------|---------|----------|
-| `first_name` | `name`, `firstname` | ✅ |
-| `company` | `company_name`, `organization` | ✅ |
-| `title` | `job_title`, `position` | ✅ |
-| `email` | `email_address` | Optional |
-| `linkedin` | `linkedin_url`, `profile_url` | Optional |
-| `employees` | `company_size`, `size` | Optional |
+| Fictional company | Title | Employees | Result |
+| --- | --- | --- | --- |
+| Northstar Demo | VP of Sales | 25 | P1 - Hot / High-Growth Startup |
+| Harbor Demo | Director of Operations | 250 | P2 - Warm / Mid-Market |
+| Meadow Demo | Operations Analyst | 1,200 | P3 - Nurture / Enterprise |
 
----
+Priority is assigned from title keywords. The category called “Company DNA” comes primarily from employee count, then company-name keywords, with Mid-Market as a fallback. These labels are heuristics, not verified intent or organizational research.
 
-## 🛠️ Technology Stack
+## CSV format
 
-- **Frontend:** Streamlit
-- **Data Processing:** Pandas
-- **Deployment:** Streamlit Cloud
+Recommended columns: `first_name`, `last_name`, `company`, `title`, `email`, `linkedin`, and `employees`. Common aliases include `name`, `company_name`, `organization`, `job_title`, and `email_address`. The synthetic example supplies every column to make the result easy to reproduce.
 
----
+Output includes the normalized contact fields, `Priority`, `Company DNA`, `Email Subject`, `Email Body`, and `LinkedIn Message`.
 
-## 📁 Project Structure
+## Limits
 
-```
-lead-script-generator/
-├── app.py              # Main Streamlit application
-├── requirements.txt    # Python dependencies
-├── sample_leads.csv    # Example lead data
-├── .gitignore
-└── README.md
-```
+- Templates can contain unsupported assumptions and generic claims. Review and rewrite the drafts before using them.
+- Title seniority and employee count do not establish authority, fit, growth, or buying intent.
+- This app does not measure response rates or revenue, so generation does not establish that a message is high-converting.
+- Malformed or missing values need cleaning before upload. The prototype is not a validated production ingestion pipeline.
+- Use synthetic data for evaluation. A shared deployment receives uploaded files on its server.
 
----
-
-## 🔗 Part of Basin OS
-
-This tool is part of the **Basin OS** revenue operations stack:
-
-| Component | Type | Purpose |
-|-----------|------|---------|
-| [GTM Signal Architect](https://github.com/BasinLeon/gtm-signal-architect) | Data (Architect) | Signal detection & lead scoring |
-| **Lead Script Generator** | Narrative (Hunter) | Personalized outreach generation |
-
----
-
-## 👤 Author
-
-**Leon Basin**  
-Revenue Operations Architect
-
-- GitHub: [@BasinLeon](https://github.com/BasinLeon)
-- LinkedIn: [leonbasin](https://linkedin.com/in/leonbasin)
-- Website: [basinleon.com](https://basinleon.com)
-
----
-
-## 📄 License
-
-MIT License - feel free to use and modify for your own outreach needs.
+Built by [Leon Basin](https://basinleon.github.io/). [Public operating record](https://basinleon.github.io/build-record/).
